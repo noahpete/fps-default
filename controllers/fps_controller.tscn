@@ -1,7 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://c3ffql15mo0aj"]
+[gd_scene load_steps=12 format=3 uid="uid://c3ffql15mo0aj"]
 
-[ext_resource type="Script" path="res://controllers/fps_controller.gd" id="1_32ti8"]
+[ext_resource type="Script" path="res://scripts/fps_controller.gd" id="1_32ti8"]
 [ext_resource type="Material" path="res://materials/player.tres" id="2_gldw4"]
+[ext_resource type="Script" path="res://scripts/reticle.gd" id="3_1md4e"]
+[ext_resource type="Theme" uid="uid://u5e5ko2bta0c" path="res://ui/themes/debug.tres" id="4_x7plm"]
+[ext_resource type="Script" path="res://scripts/debug.gd" id="5_nsp7v"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u6tj1"]
 
@@ -94,7 +97,7 @@ _data = {
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_nrurx"]
 
-[node name="CharacterBody3D" type="CharacterBody3D" node_paths=PackedStringArray("CAMERA_CONTROLLER", "ANIMATIONPLAYER", "CROUCH_SHAPECAST")]
+[node name="FPSController" type="CharacterBody3D" node_paths=PackedStringArray("CAMERA_CONTROLLER", "ANIMATIONPLAYER", "CROUCH_SHAPECAST")]
 script = ExtResource("1_32ti8")
 TOGGLE_CROUCH = false
 MOUSE_SENSITIVITY = 0.2
@@ -123,5 +126,46 @@ libraries = {
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 shape = SubResource("SphereShape3D_nrurx")
 target_position = Vector3(0, 0.5, 0)
+
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Reticle" type="CenterContainer" parent="UserInterface"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_1md4e")
+
+[node name="DebugPanel" type="PanelContainer" parent="UserInterface"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 210.0
+offset_bottom = 50.0
+theme = ExtResource("4_x7plm")
+script = ExtResource("5_nsp7v")
+
+[node name="MarginContainer" type="MarginContainer" parent="UserInterface/DebugPanel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UserInterface/DebugPanel/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_animation_player_animation_started"]
