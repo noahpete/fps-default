@@ -23,6 +23,10 @@ var headbob_time := 0.0
 var wish_dir := Vector3.ZERO
 var cam_aligned_wish_dir := Vector3.ZERO
 
+const CROUCH_TRANSLATE = 0.7
+const CROUCH_JUMP_ADD = CROUCH_TRANSLATE * 0.9
+var is_crouched := false
+
 var noclip_speed_mult := 3.0
 var noclip := false
 
@@ -57,6 +61,8 @@ func _physics_process(delta: float) -> void:
 	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)
 	cam_aligned_wish_dir = %Camera3D.global_transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)
 	
+	_handle_crouch(delta)
+	
 	if not _handle_noclip(delta):
 		if is_on_floor() or _snapped_to_stairs_last_frame:
 			if Input.is_action_just_pressed("jump") or (auto_bhop and Input.is_action_pressed("jump")):
@@ -68,7 +74,32 @@ func _physics_process(delta: float) -> void:
 		if not _snap_up_stairs_check(delta):
 			move_and_slide()
 			_snap_down_to_stairs_check()
+
+@onready var _original_capsule_height = $CollisionShape3D.shape.height
+
+func _handle_crouch(delta: float) -> void:
+	var was_crouched_last_frame = is_crouched
+	if Input.is_action_pressed("crouch"):
+		is_crouched = true
+	elif is_crouched and not self.test_move(self.transform, Vector3(0, CROUCH_TRANSLATE, 0)):
+		is_crouched = false
 		
+	# Allow for crouch to heighten a jump
+	var translate_y_if_possible := 0.0
+	if was_crouched_last_frame != is_crouched and not is_on_floor() and not _snapped_to_stairs_last_frame:
+		translate_y_if_possible = CROUCH_JUMP_ADD if is_crouched else -CROUCH_JUMP_ADD
+	
+	if translate_y_if_possible != 0.0:
+		var result = KinematicCollision3D.new()
+		self.test_move(self.transform, Vector3(0, translate_y_if_possible, 0), result)
+		self.position.y += result.get_travel().y
+		%Head.position.y -= result.get_travel().y
+		%Head.position.y = clampf(%Head.position.y, -CROUCH_TRANSLATE, 0)
+		
+	%Head.position.y = move_toward(%Head.position.y, -CROUCH_TRANSLATE if is_crouched else 0, 7.0 * delta)
+	$CollisionShape3D.shape.height = _original_capsule_height - CROUCH_TRANSLATE if is_crouched else _original_capsule_height
+	$CollisionShape3D.position.y = $CollisionShape3D.shape.height / 2
+
 func _handle_noclip(delta: float) -> bool:
 	if Input.is_action_just_pressed("noclip") and OS.has_feature("debug"):
 		noclip = !noclip
@@ -119,6 +150,8 @@ func _handle_air_physics(delta: float) -> void:
 	
 
 func get_move_speed() -> float:
+	if is_crouched:
+		return walk_speed * 0.8
 	return sprint_speed if Input.is_action_just_pressed("sprint") else walk_speed
 
 func _headbob_effect(delta: float) -> void:
