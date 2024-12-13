@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://c1jos7ouog8wr"]
+[gd_scene load_steps=15 format=3 uid="uid://c1jos7ouog8wr"]
 
 [ext_resource type="PackedScene" uid="uid://btv0a42cgxt8g" path="res://scenes/empty.tscn" id="1_714lm"]
 [ext_resource type="Material" uid="uid://cn1gsy15bkaff" path="res://materials/grid.tres" id="2_okd4c"]
 [ext_resource type="Texture2D" uid="uid://ivvpsi314b34" path="res://textures/grid.jpg" id="3_65hxo"]
+[ext_resource type="PackedScene" uid="uid://bak8ltrhbmlv5" path="res://objects/CSGStairMaker3D.tscn" id="4_ihr8x"]
 [ext_resource type="PackedScene" uid="uid://dwnon0ilit3fm" path="res://fps_controller/fps_controller.tscn" id="4_y5nda"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gd0ev"]
@@ -150,6 +151,18 @@ skeleton = NodePath("../Box")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_j6kcl")
+
+[node name="Stairs" parent="." instance=ExtResource("4_ihr8x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.66655, 1.00032, -3.46616)
+use_collision = true
+size = Vector3(3.317, 2, 1)
+num_stairs = 8
+
+[node name="Stairs" parent="Stairs" instance=ExtResource("4_ihr8x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.739389, 0.727685, -3.61611)
+use_collision = true
+size = Vector3(8.36248, 3.43762, 1)
+num_stairs = 22
 
 [node name="Player" parent="." instance=ExtResource("4_y5nda")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00263119, 0, 1.62273)
