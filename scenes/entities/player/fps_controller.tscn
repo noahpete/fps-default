@@ -1,36 +1,38 @@
-[gd_scene load_steps=5 format=3 uid="uid://dwnon0ilit3fm"]
+[gd_scene load_steps=6 format=3 uid="uid://dwnon0ilit3fm"]
 
-[ext_resource type="PackedScene" uid="uid://chiv3mdmjl4v8" path="res://models/disguise-glasses.glb" id="1_v2oo8"]
-[ext_resource type="Script" path="res://fps_controller/fps_controller.gd" id="1_vmekc"]
+[ext_resource type="PackedScene" uid="uid://chiv3mdmjl4v8" path="res://scenes/entities/player/disguise-glasses.glb" id="1_v2oo8"]
+[ext_resource type="Script" path="res://scenes/entities/player/fps_controller.gd" id="1_vmekc"]
+[ext_resource type="Script" path="res://scenes/entities/player/camera_controller.gd" id="3_2jii7"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f33w2"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_li41g"]
 
-[node name="CharacterBody3D" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_vmekc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_f33w2")
 
-[node name="WorldModel" type="Node3D" parent="."]
+[node name="View" type="Node3D" parent="."]
 unique_name_in_owner = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="WorldModel"]
+[node name="Capsule" type="MeshInstance3D" parent="View"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_li41g")
 
-[node name="disguise-glasses" parent="WorldModel" instance=ExtResource("1_v2oo8")]
+[node name="DisguiseGlasses" parent="View" instance=ExtResource("1_v2oo8")]
 transform = Transform3D(-2.2, 0, 1.9233e-07, 0, 2.2, 0, -1.9233e-07, 0, -2.2, 0.000590026, 1.1, -0.0393565)
 
-[node name="HeadOrigin" type="Node3D" parent="."]
+[node name="CameraController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+script = ExtResource("3_2jii7")
 
-[node name="Head" type="Node3D" parent="HeadOrigin"]
+[node name="Head" type="Node3D" parent="CameraController"]
 unique_name_in_owner = true
 
-[node name="Camera3D" type="Camera3D" parent="HeadOrigin/Head"]
+[node name="Camera3D" type="Camera3D" parent="CameraController/Head"]
 unique_name_in_owner = true
 cull_mask = 1048573
 

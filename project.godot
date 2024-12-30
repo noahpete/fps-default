@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="fps"
-run/main_scene="res://scenes/default.tscn"
+config/name="fps_default"
+run/main_scene="res://scenes/levels/default.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 

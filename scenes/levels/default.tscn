@@ -1,10 +1,10 @@
 [gd_scene load_steps=15 format=3 uid="uid://c1jos7ouog8wr"]
 
-[ext_resource type="PackedScene" uid="uid://btv0a42cgxt8g" path="res://scenes/empty.tscn" id="1_714lm"]
+[ext_resource type="Environment" uid="uid://dsay4gdr8k6ur" path="res://scenes/levels/default_environment.tres" id="1_bs1p0"]
 [ext_resource type="Material" uid="uid://cn1gsy15bkaff" path="res://materials/grid.tres" id="2_okd4c"]
 [ext_resource type="Texture2D" uid="uid://ivvpsi314b34" path="res://textures/grid.jpg" id="3_65hxo"]
-[ext_resource type="PackedScene" uid="uid://bak8ltrhbmlv5" path="res://objects/CSGStairMaker3D.tscn" id="4_ihr8x"]
-[ext_resource type="PackedScene" uid="uid://dwnon0ilit3fm" path="res://fps_controller/fps_controller.tscn" id="4_y5nda"]
+[ext_resource type="PackedScene" uid="uid://bak8ltrhbmlv5" path="res://scenes/entities/CSGStairMaker3D.tscn" id="4_ihr8x"]
+[ext_resource type="PackedScene" uid="uid://dwnon0ilit3fm" path="res://scenes/entities/player/fps_controller.tscn" id="4_y5nda"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gd0ev"]
 material = ExtResource("2_okd4c")
@@ -120,49 +120,48 @@ size = Vector3(8, 2, 2)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_j6kcl"]
 data = PackedVector3Array(-4, 1, 1, 4, -1, 1, -4, -1, 1, -4, 1, -1, -4, -1, -1, 4, -1, -1, -4, 1, 1, -4, 1, -1, 4, -1, 1, -4, 1, -1, 4, -1, -1, 4, -1, 1, -4, 1, -1, -4, 1, 1, -4, -1, -1, -4, 1, 1, -4, -1, 1, -4, -1, -1, -4, -1, 1, 4, -1, 1, -4, -1, -1, 4, -1, 1, 4, -1, -1, -4, -1, -1)
 
-[node name="Node3D" type="Node3D"]
+[node name="Level" type="Node3D"]
 
-[node name="WorldEnvironment" parent="." instance=ExtResource("1_714lm")]
+[node name="World" type="Node3D" parent="."]
 
-[node name="Floor" type="MeshInstance3D" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
+environment = ExtResource("1_bs1p0")
+
+[node name="Floor" type="MeshInstance3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 mesh = SubResource("BoxMesh_gd0ev")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
+[node name="StaticBody3D" type="StaticBody3D" parent="World/Floor"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Floor/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_oahyi")
 
-[node name="Box" type="MeshInstance3D" parent="."]
+[node name="Box" type="MeshInstance3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, -5)
 mesh = SubResource("BoxMesh_xc4gq")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Box"]
+[node name="StaticBody3D" type="StaticBody3D" parent="World/Box"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Box/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Box/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_vp4dy")
 
-[node name="Ramp" type="MeshInstance3D" parent="."]
+[node name="Ramp" type="MeshInstance3D" parent="World"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 5, 0, 0)
 mesh = SubResource("PrismMesh_rutao")
 skeleton = NodePath("../Box")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Ramp"]
+[node name="StaticBody3D" type="StaticBody3D" parent="World/Ramp"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Ramp/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_j6kcl")
 
-[node name="Stairs" parent="." instance=ExtResource("4_ihr8x")]
+[node name="Stairs" parent="World" instance=ExtResource("4_ihr8x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.66655, 1.00032, -3.46616)
 use_collision = true
 size = Vector3(3.317, 2, 1)
 num_stairs = 8
-
-[node name="Stairs" parent="Stairs" instance=ExtResource("4_ihr8x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.739389, 0.727685, -3.61611)
-use_collision = true
-size = Vector3(8.36248, 3.43762, 1)
-num_stairs = 22
 
 [node name="Player" parent="." instance=ExtResource("4_y5nda")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00263119, 0, 1.62273)
